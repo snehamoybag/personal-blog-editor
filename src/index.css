@@ -1,0 +1,96 @@
+/* google font  */
+@import url("https://fonts.googleapis.com/css2?family=Noto+Sans:ital,wght@0,100..900;1,100..900&display=swap");
+
+@import "tailwindcss";
+
+@theme {
+  --font-title: "Noto Sans", sans-serif;
+  --font-body: "Noto Sans", sans-serif;
+}
+
+@layer base {
+  body {
+    font-size: var(--text-base);
+    background-color: var(--color-neutral-800);
+    color: var(--color-neutral-300);
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    color: var(--color-neutral-200);
+  }
+
+  a {
+    color: var(--color-neutral-200);
+    text-decoration-line: underline;
+    text-underline-offset: 2px;
+  }
+
+  a:active {
+    transform: scale(90%);
+    opacity: 75%;
+  }
+
+  dialog {
+    background-color: var(--color-neutral-800);
+    color: var(--color-neutral-200);
+    border: 1px solid var(--color-neutral-700);
+  }
+
+  @media (min-width: 40em) {
+    body {
+      font-size: var(--text-lg);
+    }
+  }
+}
+
+@layer components {
+  .clickable:hover {
+    cursor: pointer;
+  }
+
+  .clickable:active {
+    transform: scale(90%);
+    opacity: 75%;
+  }
+
+  .hidden-underline {
+    text-decoration-line: none;
+  }
+
+  .hidden-underline:hover {
+    text-decoration-line: underline;
+  }
+
+  .container-primary {
+    max-width: var(--container-2xl);
+    margin-inline: auto;
+  }
+
+  .account-options-list > li {
+    border-bottom: 1px solid var(--color-neutral-700);
+  }
+
+  .account-options-list > li:last-of-type {
+    border-bottom: none;
+  }
+
+  .account-options-list > li > a {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    text-decoration-line: none;
+  }
+
+  .account-options-list > li > a:hover {
+    text-decoration-line: underline;
+  }
+
+  .account-options-list > li > a > svg {
+    fill: currentColor;
+  }
+}
