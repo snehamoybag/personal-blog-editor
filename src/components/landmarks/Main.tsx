@@ -9,5 +9,7 @@ export default function Main({
   className = "",
   children,
 }: Readonly<MainProps>): ReactElement {
-  return <main className={`min-h-[100vh] p-4 ${className}`}>{children}</main>;
+  return (
+    <main className={`min-h-[100vh] px-4 py-8 ${className}`}>{children}</main>
+  );
 }

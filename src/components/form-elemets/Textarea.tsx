@@ -14,8 +14,6 @@ export default function Textarea({
     <textarea
       className={`p-4 border-1 border-solid border-neutral-700 rounded-xl ${className}`}
       {...restProps}
-    >
-      {value}
-    </textarea>
+    ></textarea>
   );
 }
