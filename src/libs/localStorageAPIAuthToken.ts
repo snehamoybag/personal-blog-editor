@@ -11,5 +11,9 @@ export const getAuthTokenFromLocalStorage = () => {
 };
 
 export const setAuthTokenToLocalStorage = (token: string) => {
+  if (!TOKEN_KEY) {
+    throw new Error("Auth tOKEN kEY not found in environment variables.");
+  }
+
   localStorage.setItem(TOKEN_KEY, token);
 };

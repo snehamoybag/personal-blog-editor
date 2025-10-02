@@ -1,4 +1,4 @@
-import type { User } from "../types/User";
+import type { User } from "../types/User.type";
 
 const USER_KEY = import.meta.env.VITE_USER_KEY;
 

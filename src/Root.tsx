@@ -1,4 +1,4 @@
-import { useRef, type ReactElement } from "react";
+import { useEffect, useRef, useState, type ReactElement } from "react";
 import Header from "./components/landmarks/Header";
 import Logo from "./components/Logo";
 import { Outlet } from "react-router";
@@ -6,10 +6,27 @@ import ButtonAccount from "./components/buttons/ButtonAccount";
 import AccountOptions from "./components/AccountOptions";
 import UserAccountOptions from "./components/UserAccountOptions";
 import GuestAccountOptions from "./components/GuestAccountOptions";
-import type { User } from "./types/User";
+import type { User } from "./types/User.type";
+import {
+  getUserFromLocalStorage,
+  setUserToLocalStorage,
+} from "./libs/localStorageUser";
+import type { OutletContext } from "./types/OutletCotext.type";
 
 export default function Root(): ReactElement {
-  const user: User | null = null;
+  const [user, setUser] = useState<User | null>(getUserFromLocalStorage);
+  const outletContext = {
+    user: {
+      get: user,
+      set: setUser,
+    },
+  };
+
+  useEffect(() => {
+    // sync local storage with component
+    setUserToLocalStorage(user);
+  }, [user]);
+
   const accountOptionsRef = useRef<HTMLDialogElement>(null);
 
   const toggleAccountOptions = () => {
@@ -52,7 +69,7 @@ export default function Root(): ReactElement {
         </div>
       </Header>
 
-      <Outlet />
+      <Outlet context={outletContext satisfies OutletContext} />
     </>
   );
 }
