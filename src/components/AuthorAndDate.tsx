@@ -1,5 +1,5 @@
 import type { ReactElement } from "react";
-import type { User } from "../types/User";
+import type { User } from "../types/User.type";
 import AvatarIcon from "./AvatarIcon";
 import { Link } from "react-router";
 
