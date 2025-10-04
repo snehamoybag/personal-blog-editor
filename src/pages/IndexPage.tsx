@@ -26,7 +26,7 @@ export default function IndexPage(): ReactElement {
         <form
           action={submitUrl}
           onSubmit={handleFormSubmit}
-          className="grid gap-y-4"
+          className="grid gap-y-8"
         >
           <Editor formData={formData} setFormData={setFormData} />
 

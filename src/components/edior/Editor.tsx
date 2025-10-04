@@ -3,7 +3,7 @@ import FieldWrapper from "../form-elemets/FieldWrapper";
 import Input from "../form-elemets/Input";
 import Textarea from "../form-elemets/Textarea";
 import type { FormData } from "../../types/FormData.type";
-import CoverImgField from "../CoverImgField";
+import CoverImgField from "./CoverImgField";
 
 interface EditorProps {
   formData: FormData;
