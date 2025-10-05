@@ -4,6 +4,8 @@ import Input from "../form-elemets/Input";
 import Textarea from "../form-elemets/Textarea";
 import type { FormData } from "../../types/FormData.type";
 import CoverImgField from "./CoverImgField";
+import TagItem from "./TagItem";
+import TagsField from "./TagsField";
 
 interface EditorProps {
   formData: FormData;
@@ -23,8 +25,23 @@ export default function Editor({
     }));
   };
 
+  const tagItemElems = formData.tags.map((tag) => (
+    <li>
+      <TagItem
+        name={tag}
+        onRemove={() => {
+          console.log("tag removed");
+        }}
+      />
+    </li>
+  ));
+
   const handleCoverImageChange = (newValue: string) => {
     setFormData((prevData) => ({ ...prevData, coverImg: newValue }));
+  };
+
+  const handleTagsChange = (newValue: string[]) => {
+    setFormData((prevData) => ({ ...prevData, tags: newValue }));
   };
 
   return (
@@ -64,6 +81,8 @@ export default function Editor({
           value={formData.content}
         />
       </FieldWrapper>
+
+      <TagsField value={formData.tags} setValue={handleTagsChange} />
     </>
   );
 }

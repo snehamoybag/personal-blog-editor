@@ -7,15 +7,17 @@ const useFormData = (blog: Blog | null) => {
     title: "",
     content: "",
     coverImg: "",
+    tags: [],
     status: "DRAFT",
   });
 
   if (blog) {
-    const { title, content, coverImg, status } = blog;
+    const { title, content, coverImg, tags, status } = blog;
     setFormData({
       title,
       content,
       coverImg: coverImg.url,
+      tags,
       status,
     });
   }
