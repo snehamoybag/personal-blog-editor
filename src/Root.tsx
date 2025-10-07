@@ -12,13 +12,22 @@ import {
   setUserToLocalStorage,
 } from "./libs/localStorageUser";
 import type { OutletContext } from "./types/OutletCotext.type";
+import { getAuthTokenFromLocalStorage } from "./libs/localStorageAPIAuthToken";
 
 export default function Root(): ReactElement {
   const [user, setUser] = useState<User | null>(getUserFromLocalStorage);
+  const [authToken, setAuthToken] = useState<string | null>(
+    getAuthTokenFromLocalStorage,
+  );
+
   const outletContext = {
     user: {
       get: user,
       set: setUser,
+    },
+    authToken: {
+      get: authToken,
+      set: setAuthToken,
     },
   };
 

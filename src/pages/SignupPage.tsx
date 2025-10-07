@@ -13,10 +13,10 @@ import useUser from "../hooks/useUser";
 import getApiUrl from "../libs/getApiUrl";
 import type { ResponseShape } from "../types/ResponseShape.type";
 import { Link, useNavigate } from "react-router";
-import { setAuthTokenToLocalStorage } from "../libs/localStorageAPIAuthToken";
 import type { User } from "../types/User.type";
 import type { FieldErrors } from "../types/FieldErrors.type";
 import ErrorLabel from "../components/form-elemets/ErrorLabel";
+import useAuthToken from "../hooks/useAuthToken";
 
 export default function SignupPage(): ReactElement {
   const [formData, setFormData] = useState({
@@ -32,6 +32,7 @@ export default function SignupPage(): ReactElement {
   const redirectTo = useNavigate();
 
   const { setUser } = useUser();
+  const { setAuthToken } = useAuthToken();
 
   const [isLoading, setIsLoading] = useState(false);
 
@@ -92,9 +93,7 @@ export default function SignupPage(): ReactElement {
 
         // set user and auth token
         setUser(data.user as User);
-        setAuthTokenToLocalStorage(
-          typeof data.token === "string" ? data.token : "",
-        );
+        setAuthToken(typeof data.token === "string" ? data.token : null);
 
         // redirect to homepage after successful login
         redirectTo("/");

@@ -14,13 +14,14 @@ import getApiUrl from "../libs/getApiUrl";
 import type { ResponseShape } from "../types/ResponseShape.type";
 import type { User } from "../types/User.type";
 import { Link, useNavigate } from "react-router";
-import { setAuthTokenToLocalStorage } from "../libs/localStorageAPIAuthToken";
+import useAuthToken from "../hooks/useAuthToken";
 
 export default function LoginPage(): ReactElement {
   const [formData, setFormData] = useState({ email: "", password: "" });
   const [error, setError] = useState<Error | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const { setUser } = useUser();
+  const { setAuthToken } = useAuthToken();
   const redirectTo = useNavigate();
 
   const handleFormDataChange: ChangeEventHandler<HTMLInputElement> = (e) => {
@@ -64,9 +65,7 @@ export default function LoginPage(): ReactElement {
 
         // set user and auth token
         setUser(data.user as User);
-        setAuthTokenToLocalStorage(
-          typeof data.token === "string" ? data.token : "",
-        );
+        setAuthToken(typeof data.token === "string" ? data.token : null);
 
         // redirect to homepage after successful login
         redirectTo("/");

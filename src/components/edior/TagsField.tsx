@@ -22,6 +22,8 @@ export default function TagsField({
   const [minTagCharLength, maxTagCharLength] = [3, 55];
 
   const handleInputChagne: ChangeEventHandler<HTMLInputElement> = (e) => {
+    e.preventDefault();
+
     const enteredValue = e.target.value;
 
     // do not allow repeated underscores

@@ -5,12 +5,12 @@ import LabelChangeCoverImg from "./LabelChangeCoverImg";
 import LabelAddCoverImg from "./LabelAddCoverImg";
 import ErrorLabel from "../form-elemets/ErrorLabel";
 import getApiUrl from "../../libs/getApiUrl";
-import { getUserFromLocalStorage } from "../../libs/localStorageUser";
-import { getAuthTokenFromLocalStorage } from "../../libs/localStorageAPIAuthToken";
-import type { ResponseShape } from "../../types/ResponseShape.type";
 import HttpError from "../../libs/HttpError";
 import type { Image } from "../../types/Image.type";
 import LoadingSpinner from "../LoadingSpinner";
+import useUser from "../../hooks/useUser";
+import useAuthToken from "../../hooks/useAuthToken";
+import fetchData from "../../libs/fetchData";
 
 interface CoverImgFieldProps {
   value?: string;
@@ -21,78 +21,61 @@ export default function CoverImgField({
   value,
   setValue,
 }: Readonly<CoverImgFieldProps>): ReactElement {
-  const [error, setError] = useState<Error | null>(null);
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<Error | null>(null);
+  const { user } = useUser();
+  const { authToken } = useAuthToken();
 
-  // upload image on change
   const handleChange: ChangeEventHandler<HTMLInputElement> = async (e) => {
-    try {
-      // reset states
-      setLoading(true);
-      setError(null);
+    setLoading(true);
+    setError(null); // reset error from past fail operation
 
-      const user = getUserFromLocalStorage();
-      const authToken = getAuthTokenFromLocalStorage();
-      if (!user || !authToken) {
-        throw new Error("You must log in to upload an image.");
-      }
+    if (!user || !authToken) {
+      setError(new Error("Please log in to upload a cover image."));
+      return;
+    }
+    const elem = e.target;
+    const files = elem.files;
 
-      const elem = e.target;
-      const files = elem.files;
+    if (!files || !files.length) {
+      setError(new Error("Please select a valid image file to upload."));
+      return;
+    }
 
-      if (!files || !files.length) {
-        throw new Error("Please select an image file to upload.");
-      }
+    const url = `${getApiUrl()}/users/${user.id}/images`;
 
-      const url = `${getApiUrl()}/users/${user.id}/images`;
+    const headers = new Headers();
+    headers.append("Authorization", `Bearer ${authToken}`);
 
-      const headers = new Headers();
-      headers.append("Authorization", `Bearer ${authToken}`);
+    // needed for multipart/fordata
+    const formData = new FormData();
+    formData.append(elem.name, files[0]);
 
-      // needed for multipart/fordata
-      const formData = new FormData();
-      formData.append(elem.name, files[0]);
+    const [error, data] = await fetchData(url, {
+      mode: "cors",
+      method: "POST",
+      headers,
+      body: formData,
+    });
 
-      const response = await fetch(url, {
-        mode: "cors",
-        method: "POST",
-        headers,
-        body: formData,
-      });
+    setLoading(false);
 
-      const result: ResponseShape = await response.json();
+    if (error) {
+      setError(error);
+      return;
+    }
 
-      // handle http errors
-      if (result.status !== "success" || result.statusCode >= 400) {
-        throw new HttpError(result.statusCode, result.message);
-      }
+    if (!data || !data.image) {
+      setError(
+        new HttpError(503, "Server responed without the uploaded image data."),
+      );
 
-      if (!result.data || !result.data.image) {
-        throw new HttpError(
-          503,
-          "Server responed without the uploaded image data.",
-        );
-      }
+      return;
+    }
 
-      // update value
-      const image = result.data.image as Image;
-      if (setValue) {
-        setValue(image.url);
-      }
-    } catch (err) {
-      if (err instanceof Error === false) {
-        setError(
-          new Error("Unknown error has occured during the image upload."),
-        );
-        return;
-      }
-
-      // ignore abortcontroller errors
-      if (err.name !== "AbortError") {
-        setError(err);
-      }
-    } finally {
-      setLoading(false);
+    if (setValue) {
+      const image = data.image as Image;
+      setValue(image.url as string);
     }
   };
 
@@ -137,7 +120,7 @@ export default function CoverImgField({
       {/* error label */}
       {error && (
         <ErrorLabel htmlFor="cover-image" className="block mt-2">
-          Error: {error.message}
+          {error.message}
         </ErrorLabel>
       )}
     </div>
