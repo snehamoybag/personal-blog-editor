@@ -16,6 +16,9 @@ import useAuthToken from "../hooks/useAuthToken";
 import LoadingModal from "../components/LoadingModal";
 import useDataFetcher from "../hooks/useDataFetcher";
 import ErrorParagraph from "../components/ErrorParagraph";
+import SuccessPage from "./SuccessPage";
+import getBlogUrl from "../libs/getBlogUrl";
+import type { Blog } from "../types/Blog.type";
 
 export default function IndexPage(): ReactElement {
   const { user } = useUser();
@@ -38,7 +41,7 @@ export default function IndexPage(): ReactElement {
 
     const headers = new Headers();
     headers.append("Content-Type", "application/json");
-    headers.append("Authorization", `Beaer ${authToken}`);
+    headers.append("Authorization", `Bearer ${authToken}`);
 
     void fetcher(url, {
       mode: "cors",
@@ -69,6 +72,24 @@ export default function IndexPage(): ReactElement {
       setFormErrors(fieldErrors);
     }
   }, [data]);
+
+  if (data && data.blog) {
+    const blog = data.blog as Blog;
+
+    return (
+      <SuccessPage message="Blog published successfully.">
+        <a
+          href={`${getBlogUrl()}/blogs/${blog.id}}`}
+          target="_blank"
+          className="clickable inline-block no-underline bg-neutral-700 rounded-full mt-8"
+        >
+          <span className="block px-8 py-2 shadow-sm active:shadow-none">
+            View Blog
+          </span>
+        </a>
+      </SuccessPage>
+    );
+  }
 
   return (
     <Main>

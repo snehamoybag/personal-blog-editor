@@ -1,0 +1,37 @@
+import type { ReactElement, ReactNode } from "react";
+import Main from "../components/landmarks/Main";
+import Tittle700 from "../components/titles/Tittle700";
+
+interface SuccessPageProps {
+  message?: string;
+  children?: ReactNode;
+}
+
+export default function SuccessPage({
+  message,
+  children,
+}: Readonly<SuccessPageProps>): ReactElement {
+  return (
+    <Main>
+      <section className="container-primary text-center">
+        <div className="grid justify-items-center">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            height="24px"
+            viewBox="0 -960 960 960"
+            width="24px"
+            fill="#000000"
+            className="fill-emerald-300 size-30"
+          >
+            <path d="m424-296 282-282-56-56-226 226-114-114-56 56 170 170Zm56 216q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Zm0-80q134 0 227-93t93-227q0-134-93-227t-227-93q-134 0-227 93t-93 227q0 134 93 227t227 93Zm0-320Z" />
+          </svg>
+          <Tittle700 as="h1" className="text-5xl">
+            Success!
+          </Tittle700>
+          <p className="text-xl mt-2 opacity-90">{message}</p>
+        </div>
+        {children}
+      </section>
+    </Main>
+  );
+}
