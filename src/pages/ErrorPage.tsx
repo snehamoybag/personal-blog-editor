@@ -8,8 +8,6 @@ import illustration from "../assets/page-error-illustration.svg";
 export default function ErrorPage(): ReactElement {
   const error = useRouteError();
 
-  console.error(error);
-
   // default fallback cases
   let title = "Dang! Something went wrong.";
   let paragraph = "An unknown error has occured. Please try again later.";

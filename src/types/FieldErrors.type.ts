@@ -1,10 +1,3 @@
-export type FieldErrors = Record<
-  string,
-  {
-    type?: "field";
-    location?: "body";
-    value?: string;
-    msg: string;
-    path: string;
-  }
->;
+import type { FieldError } from "./FieldError.type";
+
+export type FieldErrors = Record<string, FieldError>;

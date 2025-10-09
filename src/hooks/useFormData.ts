@@ -6,17 +6,17 @@ const useFormData = (blog: Blog | null) => {
   const [formData, setFormData] = useState<FormData>({
     title: "",
     content: "",
-    coverImg: "",
+    coverImgUrl: "",
     tags: [],
     status: "DRAFT",
   });
 
   if (blog) {
-    const { title, content, coverImg, tags, status } = blog;
+    const { title, content, coverImgUrl, tags, status } = blog;
     setFormData({
       title,
       content,
-      coverImg: coverImg.url,
+      coverImgUrl: coverImg.url,
       tags,
       status,
     });

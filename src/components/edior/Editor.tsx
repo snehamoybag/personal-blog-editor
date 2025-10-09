@@ -1,20 +1,23 @@
-import { type ChangeEventHandler, type ReactElement } from "react";
+import { useCallback, type ChangeEventHandler, type ReactElement } from "react";
 import FieldWrapper from "../form-elemets/FieldWrapper";
 import Input from "../form-elemets/Input";
 import Textarea from "../form-elemets/Textarea";
 import type { FormData } from "../../types/FormData.type";
 import CoverImgField from "./CoverImgField";
-import TagItem from "./TagItem";
 import TagsField from "./TagsField";
+import type { FieldErrors } from "../../types/FieldErrors.type";
+import ErrorLabel from "../form-elemets/ErrorLabel";
 
 interface EditorProps {
   formData: FormData;
   setFormData: React.Dispatch<React.SetStateAction<FormData>>;
+  formErrors: FieldErrors | null;
 }
 
 export default function Editor({
   formData,
   setFormData,
+  formErrors,
 }: Readonly<EditorProps>): ReactElement {
   const handleFieldChagne: ChangeEventHandler<
     HTMLInputElement | HTMLTextAreaElement
@@ -25,30 +28,26 @@ export default function Editor({
     }));
   };
 
-  const tagItemElems = formData.tags.map((tag) => (
-    <li>
-      <TagItem
-        name={tag}
-        onRemove={() => {
-          console.log("tag removed");
-        }}
-      />
-    </li>
-  ));
+  const handleCoverImageChange = useCallback(
+    (newValue: string) => {
+      setFormData((prevData) => ({ ...prevData, coverImgUrl: newValue }));
+    },
+    [setFormData]
+  );
 
-  const handleCoverImageChange = (newValue: string) => {
-    setFormData((prevData) => ({ ...prevData, coverImg: newValue }));
-  };
-
-  const handleTagsChange = (newValue: string[]) => {
-    setFormData((prevData) => ({ ...prevData, tags: newValue }));
-  };
+  const handleTagsChange = useCallback(
+    (newValue: string[]) => {
+      setFormData((prevData) => ({ ...prevData, tags: newValue }));
+    },
+    [setFormData]
+  );
 
   return (
     <>
       <CoverImgField
-        value={formData.coverImg}
+        value={formData.coverImgUrl}
         setValue={handleCoverImageChange}
+        error={formErrors ? formErrors.coverImgUrl : undefined}
       />
 
       <FieldWrapper>
@@ -64,7 +63,11 @@ export default function Editor({
           maxLength={120}
           required
           onChange={handleFieldChagne}
+          className={formErrors && formErrors.title ? "border-red-300" : ""}
         />
+        {formErrors && formErrors.title && (
+          <ErrorLabel htmlFor="title">{formErrors.title.msg}</ErrorLabel>
+        )}
       </FieldWrapper>
 
       <FieldWrapper>
@@ -79,10 +82,18 @@ export default function Editor({
           required
           onChange={handleFieldChagne}
           value={formData.content}
+          className={formErrors && formErrors.content ? "border-red-300" : ""}
         />
+        {formErrors && formErrors.content && (
+          <ErrorLabel htmlFor="content">{formErrors.content.msg}</ErrorLabel>
+        )}
       </FieldWrapper>
 
-      <TagsField value={formData.tags} setValue={handleTagsChange} />
+      <TagsField
+        value={formData.tags}
+        setValue={handleTagsChange}
+        error={formErrors ? formErrors.tags : undefined}
+      />
     </>
   );
 }

@@ -8,15 +8,19 @@ import {
 import TagItem from "./TagItem";
 import FieldWrapper from "../form-elemets/FieldWrapper";
 import Input from "../form-elemets/Input";
+import type { FieldError } from "../../types/FieldError.type";
+import ErrorLabel from "../form-elemets/ErrorLabel";
 
 interface TagsFieldProps {
   value: string[];
   setValue: (newValue: string[]) => void;
+  error?: FieldError;
 }
 
 export default function TagsField({
   value,
   setValue,
+  error,
 }: Readonly<TagsFieldProps>): ReactElement {
   const [inputValue, setInputValue] = useState("");
   const [minTagCharLength, maxTagCharLength] = [3, 55];
@@ -39,7 +43,7 @@ export default function TagsField({
     }
   };
 
-  // adds new tags
+  // adds new tags on enter and comma
   const handleInputKeyUp: KeyboardEventHandler<HTMLInputElement> = (e) => {
     if (e.key !== "Enter" && e.key !== ",") {
       return;
@@ -100,7 +104,7 @@ export default function TagsField({
 
       <FieldWrapper className="mt-4">
         <label htmlFor="tags" className="sr-only">
-          tags
+          tags:
         </label>
         <Input
           id="tags"
@@ -111,7 +115,11 @@ export default function TagsField({
           maxLength={maxTagCharLength}
           onChange={handleInputChagne}
           onKeyUp={handleInputKeyUp}
+          required={value.length < 1} // required till no tag is selected
+          className={error ? "border-red-300" : ""}
         />
+
+        {error && <ErrorLabel htmlFor="tags">{error.msg}</ErrorLabel>}
       </FieldWrapper>
     </div>
   );

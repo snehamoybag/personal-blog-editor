@@ -41,6 +41,6 @@ export default function Textarea({
       className={`min-h-[5lh] p-4 border-1 border-solid border-neutral-700 rounded-xl resize-none overflow-hidden ${className}`}
       onChange={handleChange}
       {...restProps}
-    ></textarea>
+    />
   );
 }

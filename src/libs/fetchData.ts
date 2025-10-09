@@ -9,13 +9,14 @@ const fetchData = async (
 ): Promise<FetchData> => {
   try {
     const response = await fetch(input, init);
-
-    if (!response.ok || response.status >= 400) {
-      return [new HttpError(response.status, response.statusText), null];
-    }
-
     const result: ResponseShape = await response.json();
+
+    const { status, statusCode, message } = result;
     const data = result.data || null;
+
+    if (status !== "success" || statusCode >= 400) {
+      return [new HttpError(statusCode, message), data];
+    }
 
     return [null, data];
   } catch (err) {
