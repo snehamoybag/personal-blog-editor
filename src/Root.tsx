@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, type ReactElement } from "react";
+import { useEffect, useMemo, useRef, useState, type ReactElement } from "react";
 import Header from "./components/landmarks/Header";
 import Logo from "./components/Logo";
 import { Outlet } from "react-router";
@@ -12,29 +12,36 @@ import {
   setUserToLocalStorage,
 } from "./libs/localStorageUser";
 import type { OutletContext } from "./types/OutletCotext.type";
-import { getAuthTokenFromLocalStorage } from "./libs/localStorageAPIAuthToken";
+import {
+  getAuthTokenFromLocalStorage,
+  setAuthTokenToLocalStorage,
+} from "./libs/localStorageAPIAuthToken";
 
 export default function Root(): ReactElement {
   const [user, setUser] = useState<User | null>(getUserFromLocalStorage);
   const [authToken, setAuthToken] = useState<string | null>(
-    getAuthTokenFromLocalStorage,
+    getAuthTokenFromLocalStorage
   );
 
-  const outletContext = {
-    user: {
-      get: user,
-      set: setUser,
-    },
-    authToken: {
-      get: authToken,
-      set: setAuthToken,
-    },
-  };
+  const outletContext = useMemo(
+    () => ({
+      user: {
+        get: user,
+        set: setUser,
+      },
+      authToken: {
+        get: authToken,
+        set: setAuthToken,
+      },
+    }),
+    [user, authToken]
+  );
 
+  // sync local storage with component
   useEffect(() => {
-    // sync local storage with component
     setUserToLocalStorage(user);
-  }, [user]);
+    setAuthTokenToLocalStorage(authToken || "");
+  }, [user, authToken]);
 
   const accountOptionsRef = useRef<HTMLDialogElement>(null);
 

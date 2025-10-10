@@ -1,6 +1,6 @@
 import type { User } from "../types/User.type";
 
-const USER_KEY = import.meta.env.VITE_USER_KEY;
+const USER_KEY = import.meta.env.VITE_USER_KEY as string;
 
 export const getUserFromLocalStorage = () => {
   const raw = localStorage.getItem(USER_KEY);
@@ -9,19 +9,19 @@ export const getUserFromLocalStorage = () => {
     return null;
   }
 
-  const parsed = JSON.parse(raw);
+  const parsed = JSON.parse(raw) as unknown;
 
   if (typeof parsed !== "object" || Array.isArray(parsed) || parsed === null) {
     return null;
   }
 
   const matchesUserProperties = ["id", "role", "profile"].every((key) =>
-    Object.hasOwn(parsed, key),
+    Object.hasOwn(parsed, key)
   );
 
   if (!matchesUserProperties) {
     console.error(
-      new Error("User data missing one or multiple important properties."),
+      new Error("User data missing one or multiple important properties.")
     );
     return null;
   }
