@@ -1,4 +1,6 @@
 import {
+  useEffect,
+  useRef,
   useState,
   type ChangeEventHandler,
   type FormEventHandler,
@@ -11,14 +13,19 @@ import ButtonPrimary from "../components/buttons/ButtonPrimary";
 import Input from "../components/form-elemets/Input";
 import useUser from "../hooks/useUser";
 import getApiUrl from "../libs/getApiUrl";
-import type { ResponseShape } from "../types/ResponseShape.type";
-import { Link, useNavigate } from "react-router";
 import type { User } from "../types/User.type";
 import type { FieldErrors } from "../types/FieldErrors.type";
 import ErrorLabel from "../components/form-elemets/ErrorLabel";
 import useAuthToken from "../hooks/useAuthToken";
+import useDataFetcher from "../hooks/useDataFetcher";
+import LoadingModal from "../components/LoadingModal";
+import SuccessPage from "./SuccessPage";
 
 export default function SignupPage(): ReactElement {
+  const { data, error, isLoading, fetcher } = useDataFetcher();
+  const [fieldErrors, setFieldErrors] = useState<FieldErrors | null>(null);
+  const { user, setUser } = useUser();
+  const { authToken, setAuthToken } = useAuthToken();
   const [formData, setFormData] = useState({
     firstName: "",
     lastName: "",
@@ -27,15 +34,6 @@ export default function SignupPage(): ReactElement {
     confirmedPassword: "",
   });
 
-  const [fieldErrors, setFieldErrors] = useState<FieldErrors>({});
-
-  const redirectTo = useNavigate();
-
-  const { setUser } = useUser();
-  const { setAuthToken } = useAuthToken();
-
-  const [isLoading, setIsLoading] = useState(false);
-
   const handleFormDataChange: ChangeEventHandler<HTMLInputElement> = (e) => {
     const elem = e.target;
     setFormData((prevData) => ({ ...prevData, [elem.name]: elem.value }));
@@ -43,6 +41,7 @@ export default function SignupPage(): ReactElement {
 
   const handleFormSubmit: FormEventHandler<HTMLFormElement> = (e) => {
     e.preventDefault();
+    setFieldErrors(null); // reset form errors
 
     // prevent submiting the form if passoword field do not match
     if (formData.password !== formData.confirmedPassword) {
@@ -57,55 +56,71 @@ export default function SignupPage(): ReactElement {
       return;
     }
 
-    setIsLoading(true);
-
     const url = getApiUrl() + "/signup";
 
-    fetch(url, {
+    void fetcher(url, {
       mode: "cors",
       method: "POST",
       headers: [["Content-Type", "application/json"]],
       body: JSON.stringify(formData),
-    })
-      .then((res) => {
-        return res.json();
-      })
-      .then((result: ResponseShape) => {
-        const { status, statusCode, message, data } = result;
-
-        if (status === "error" || statusCode > 400) {
-          throw new Error(message);
-        }
-
-        if (status === "failure" || statusCode === 400) {
-          if (!data) {
-            throw new Error(message);
-          }
-
-          setFieldErrors((data.errors as FieldErrors) || null);
-
-          return result;
-        }
-
-        if (!data || !data.user) {
-          throw new Error("User data not found in response body.");
-        }
-
-        // set user and auth token
-        setUser(data.user as User);
-        setAuthToken(typeof data.token === "string" ? data.token : null);
-
-        // redirect to homepage after successful login
-        redirectTo("/");
-      })
-      .catch((err) => {
-        throw err;
-      })
-      .finally(() => setIsLoading(false));
+    });
   };
 
-  if (isLoading) {
-    return <p>Loading...</p>;
+  // trigger loading modal
+  const loadingModalRef = useRef<HTMLDialogElement | null>(null);
+  useEffect(() => {
+    const elem = loadingModalRef.current;
+
+    if (!elem) {
+      return;
+    }
+
+    if (isLoading) {
+      elem.showModal();
+    } else {
+      elem.close();
+    }
+  }, [isLoading]);
+
+  // login user or field errors if any
+  useEffect(() => {
+    if (!data) {
+      return;
+    }
+
+    const { errors, user, token } = data;
+
+    if (error && errors) {
+      setFieldErrors(errors as FieldErrors);
+    } else if (!error && user && token) {
+      setUser(user as User);
+      setAuthToken(JSON.stringify(token));
+    }
+  }, [data, error, setUser, setAuthToken]);
+
+  if (user && authToken) {
+    return (
+      <SuccessPage
+        message={`Signup complete. You're now logged in as ${user.profile.firstName} ${user.profile.lastName}`}
+      >
+        <Link
+          to="/"
+          className="clickable max-w-fit flex items-center gap-2 no-underline px-4 py-2 bg-neutral-700 rounded-full shadow-sm active:shadow-none mt-8 mx-auto"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            height="24px"
+            viewBox="0 -960 960 960"
+            width="24px"
+            fill="#000000"
+            className="fill-current"
+          >
+            <path d="M240-200h120v-240h240v240h120v-360L480-740 240-560v360Zm-80 80v-480l320-240 320 240v480H520v-240h-80v240H160Zm320-350Z" />
+          </svg>
+          <span>Return to home page</span>
+        </Link>
+      </SuccessPage>
+    );
   }
 
   return (
@@ -138,10 +153,10 @@ export default function SignupPage(): ReactElement {
                 maxLength={35}
                 required
                 onChange={handleFormDataChange}
-                isInvalid={Boolean(fieldErrors.firstName)}
+                isInvalid={Boolean(fieldErrors && fieldErrors.firstName)}
               />
 
-              {fieldErrors.firstName && (
+              {fieldErrors && fieldErrors.firstName && (
                 <ErrorLabel htmlFor="first-name">
                   {fieldErrors.firstName.msg}
                 </ErrorLabel>
@@ -159,10 +174,10 @@ export default function SignupPage(): ReactElement {
                 maxLength={35}
                 required
                 onChange={handleFormDataChange}
-                isInvalid={Boolean(fieldErrors.lastName)}
+                isInvalid={Boolean(fieldErrors && fieldErrors.lastName)}
               />
 
-              {fieldErrors.lastName && (
+              {fieldErrors && fieldErrors.lastName && (
                 <ErrorLabel htmlFor="last-name">
                   {fieldErrors.lastName.msg}
                 </ErrorLabel>
@@ -179,10 +194,10 @@ export default function SignupPage(): ReactElement {
               value={formData.email}
               required
               onChange={handleFormDataChange}
-              isInvalid={Boolean(fieldErrors.email)}
+              isInvalid={Boolean(fieldErrors && fieldErrors.email)}
             />
 
-            {fieldErrors.email && (
+            {fieldErrors && fieldErrors.email && (
               <ErrorLabel htmlFor="email">{fieldErrors.email.msg}</ErrorLabel>
             )}
           </FieldWrapper>
@@ -198,10 +213,10 @@ export default function SignupPage(): ReactElement {
               maxLength={55}
               required
               onChange={handleFormDataChange}
-              isInvalid={Boolean(fieldErrors.password)}
+              isInvalid={Boolean(fieldErrors && fieldErrors.password)}
             />
 
-            {fieldErrors.password && (
+            {fieldErrors && fieldErrors.password && (
               <ErrorLabel htmlFor="password">
                 {fieldErrors.password.msg}
               </ErrorLabel>
@@ -219,10 +234,10 @@ export default function SignupPage(): ReactElement {
               maxLength={55}
               required
               onChange={handleFormDataChange}
-              isInvalid={Boolean(fieldErrors.confirmedPassword)}
+              isInvalid={Boolean(fieldErrors && fieldErrors.confirmedPassword)}
             />
 
-            {fieldErrors.confirmedPassword && (
+            {fieldErrors && fieldErrors.confirmedPassword && (
               <ErrorLabel htmlFor="confirmed-password">
                 {fieldErrors.confirmedPassword.msg}
               </ErrorLabel>
@@ -238,6 +253,7 @@ export default function SignupPage(): ReactElement {
           </ButtonPrimary>
         </form>
       </section>
+      <LoadingModal ref={loadingModalRef} message="Signing up..." />
     </Main>
   );
 }
