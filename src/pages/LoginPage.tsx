@@ -1,6 +1,5 @@
 import {
   useEffect,
-  useRef,
   useState,
   type ChangeEventHandler,
   type FormEventHandler,
@@ -46,22 +45,6 @@ export default function LoginPage(): ReactElement {
       body: JSON.stringify(formData),
     });
   };
-
-  // trigger loading modal
-  const loadingModalRef = useRef<HTMLDialogElement | null>(null);
-  useEffect(() => {
-    const elem = loadingModalRef.current;
-
-    if (!elem) {
-      return;
-    }
-
-    if (isLoading) {
-      elem.showModal();
-    } else {
-      elem.close();
-    }
-  }, [isLoading]);
 
   // login user
   useEffect(() => {
@@ -154,7 +137,7 @@ export default function LoginPage(): ReactElement {
           </ButtonPrimary>
         </form>
       </section>
-      <LoadingModal ref={loadingModalRef} message="Loggin in..." />
+      <LoadingModal message="Loggin in..." isLoading={isLoading} />
     </Main>
   );
 }

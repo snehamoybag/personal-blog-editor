@@ -1,6 +1,5 @@
 import {
   useEffect,
-  useRef,
   useState,
   type FormEventHandler,
   type ReactElement,
@@ -32,8 +31,6 @@ export default function IndexPage(): ReactElement {
     throw new Error("User must log in to to create a new blog.");
   }
 
-  const loadingModalRef = useRef<HTMLDialogElement>(null);
-
   const handleFormSubmit: FormEventHandler<HTMLFormElement> = (e) => {
     e.preventDefault();
 
@@ -50,20 +47,6 @@ export default function IndexPage(): ReactElement {
       body: JSON.stringify(formData),
     });
   };
-
-  // trigger loading modal
-  useEffect(() => {
-    const loadingModalElem = loadingModalRef.current;
-    if (!loadingModalElem) {
-      return;
-    }
-
-    if (isLoading) {
-      loadingModalElem.showModal();
-    } else {
-      loadingModalElem.close();
-    }
-  }, [isLoading]);
 
   // update form errors
   useEffect(() => {
@@ -115,7 +98,7 @@ export default function IndexPage(): ReactElement {
         </form>
       </section>
 
-      <LoadingModal ref={loadingModalRef} message="Publishing new blog..." />
+      <LoadingModal message="Publishing new blog..." isLoading={isLoading} />
     </Main>
   );
 }

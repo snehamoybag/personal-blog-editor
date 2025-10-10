@@ -1,17 +1,31 @@
-import type { ReactElement, RefObject } from "react";
+import { useEffect, useRef, type ReactElement, type RefObject } from "react";
 import LoadingSpinner from "./LoadingSpinner";
 
 interface LoadingModalProps {
-  ref: RefObject<HTMLDialogElement | null>;
   message: string;
+  isLoading: boolean;
   className?: string;
 }
 
 export default function LoadingModal({
-  ref,
   message,
+  isLoading = false,
   className = "",
 }: Readonly<LoadingModalProps>): ReactElement {
+  const ref = useRef<HTMLDialogElement>(null);
+
+  useEffect(() => {
+    if (!ref || !ref.current) {
+      return;
+    }
+
+    if (isLoading) {
+      ref.current.showModal();
+    } else {
+      ref.current.close();
+    }
+  });
+
   return (
     <dialog
       ref={ref}

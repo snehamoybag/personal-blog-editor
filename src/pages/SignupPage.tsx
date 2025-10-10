@@ -1,6 +1,5 @@
 import {
   useEffect,
-  useRef,
   useState,
   type ChangeEventHandler,
   type FormEventHandler,
@@ -20,6 +19,7 @@ import useAuthToken from "../hooks/useAuthToken";
 import useDataFetcher from "../hooks/useDataFetcher";
 import LoadingModal from "../components/LoadingModal";
 import SuccessPage from "./SuccessPage";
+import { Link } from "react-router";
 
 export default function SignupPage(): ReactElement {
   const { data, error, isLoading, fetcher } = useDataFetcher();
@@ -65,22 +65,6 @@ export default function SignupPage(): ReactElement {
       body: JSON.stringify(formData),
     });
   };
-
-  // trigger loading modal
-  const loadingModalRef = useRef<HTMLDialogElement | null>(null);
-  useEffect(() => {
-    const elem = loadingModalRef.current;
-
-    if (!elem) {
-      return;
-    }
-
-    if (isLoading) {
-      elem.showModal();
-    } else {
-      elem.close();
-    }
-  }, [isLoading]);
 
   // login user or field errors if any
   useEffect(() => {
@@ -253,7 +237,7 @@ export default function SignupPage(): ReactElement {
           </ButtonPrimary>
         </form>
       </section>
-      <LoadingModal ref={loadingModalRef} message="Signing up..." />
+      <LoadingModal message="Signing up..." isLoading={isLoading} />
     </Main>
   );
 }
