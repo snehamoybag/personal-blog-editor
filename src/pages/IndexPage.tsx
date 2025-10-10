@@ -18,6 +18,7 @@ import ErrorParagraph from "../components/ErrorParagraph";
 import SuccessPage from "./SuccessPage";
 import getBlogUrl from "../libs/getBlogUrl";
 import type { Blog } from "../types/Blog.type";
+import HttpError from "../libs/HttpError";
 
 export default function IndexPage(): ReactElement {
   const { user } = useUser();
@@ -28,7 +29,10 @@ export default function IndexPage(): ReactElement {
   const { data, error, isLoading, fetcher } = useDataFetcher();
 
   if (!user || !authToken) {
-    throw new Error("User must log in to to create a new blog.");
+    throw new HttpError(
+      401,
+      "Unauthorized: User must log in to to create a new blog."
+    );
   }
 
   const handleFormSubmit: FormEventHandler<HTMLFormElement> = (e) => {
