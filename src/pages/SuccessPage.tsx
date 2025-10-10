@@ -28,7 +28,7 @@ export default function SuccessPage({
           <Tittle700 as="h1" className="text-5xl">
             Success!
           </Tittle700>
-          <p className="text-xl mt-2 opacity-90">{message}</p>
+          <p className="text-lg mt-2 opacity-90">{message}</p>
         </div>
         {children}
       </section>

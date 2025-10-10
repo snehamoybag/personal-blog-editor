@@ -3,7 +3,7 @@ export default class HttpError extends Error {
   readonly statusCode: number;
 
   constructor(statusCode: number, statusText: string) {
-    super(`Error${statusCode}: ${statusText}`);
+    super(`${statusCode} ${statusText}`);
     this.statusCode = statusCode;
   }
 }

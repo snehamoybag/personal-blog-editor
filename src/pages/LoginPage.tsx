@@ -1,4 +1,6 @@
 import {
+  useEffect,
+  useRef,
   useState,
   type ChangeEventHandler,
   type FormEventHandler,
@@ -11,18 +13,19 @@ import Input from "../components/form-elemets/Input";
 import ButtonPrimary from "../components/buttons/ButtonPrimary";
 import useUser from "../hooks/useUser";
 import getApiUrl from "../libs/getApiUrl";
-import type { ResponseShape } from "../types/ResponseShape.type";
-import type { User } from "../types/User.type";
-import { Link, useNavigate } from "react-router";
+import { Link } from "react-router";
 import useAuthToken from "../hooks/useAuthToken";
+import useDataFetcher from "../hooks/useDataFetcher";
+import LoadingModal from "../components/LoadingModal";
+import ErrorParagraph from "../components/ErrorParagraph";
+import type { User } from "../types/User.type";
+import SuccessPage from "./SuccessPage";
 
 export default function LoginPage(): ReactElement {
+  const { data, error, isLoading, fetcher } = useDataFetcher();
   const [formData, setFormData] = useState({ email: "", password: "" });
-  const [error, setError] = useState<Error | null>(null);
-  const [isLoading, setIsLoading] = useState(false);
-  const { setUser } = useUser();
-  const { setAuthToken } = useAuthToken();
-  const redirectTo = useNavigate();
+  const { user, setUser } = useUser();
+  const { authToken, setAuthToken } = useAuthToken();
 
   const handleFormDataChange: ChangeEventHandler<HTMLInputElement> = (e) => {
     const elem = e.target;
@@ -32,53 +35,69 @@ export default function LoginPage(): ReactElement {
   const handleFormSubmit: FormEventHandler<HTMLFormElement> = (e) => {
     e.preventDefault();
 
-    setIsLoading(true);
-
     const url = getApiUrl() + "/login";
+    const headers = new Headers();
+    headers.append("Content-Type", "application/json");
 
-    fetch(url, {
+    void fetcher(url, {
       mode: "cors",
       method: "POST",
-      headers: [["Content-Type", "application/json"]],
+      headers,
       body: JSON.stringify(formData),
-    })
-      .then((res) => {
-        return res.json();
-      })
-      .then((result: ResponseShape) => {
-        const { status, statusCode, message, data } = result;
-        let error: Error | null = null;
-
-        if (statusCode >= 400 || status !== "success") {
-          error = new Error(message);
-
-          setError(error);
-          throw error;
-        }
-
-        if (!data || !data.user) {
-          error = new Error("User data not found in response body.");
-
-          setError(error);
-          throw error;
-        }
-
-        // set user and auth token
-        setUser(data.user as User);
-        setAuthToken(typeof data.token === "string" ? data.token : null);
-
-        // redirect to homepage after successful login
-        redirectTo("/");
-      })
-      .catch((err) => {
-        setError(err);
-        throw err;
-      })
-      .finally(() => setIsLoading(false));
+    });
   };
 
-  if (isLoading) {
-    return <p>Loading...</p>;
+  // trigger loading modal
+  const loadingModalRef = useRef<HTMLDialogElement | null>(null);
+  useEffect(() => {
+    const elem = loadingModalRef.current;
+
+    if (!elem) {
+      return;
+    }
+
+    if (isLoading) {
+      elem.showModal();
+    } else {
+      elem.close();
+    }
+  }, [isLoading]);
+
+  // login user
+  useEffect(() => {
+    if (!data || !data.user || !data.token) {
+      return;
+    }
+
+    const { user, token } = data;
+
+    setUser(user as User);
+    setAuthToken(JSON.stringify(token));
+  }, [data, error, setUser, setAuthToken]);
+
+  if (user && authToken) {
+    return (
+      <SuccessPage
+        message={`You're now logged in as ${user.profile.firstName} ${user.profile.lastName}`}
+      >
+        <Link
+          to="/"
+          className="clickable max-w-fit flex items-center gap-2 no-underline px-4 py-2 bg-neutral-700 rounded-full shadow-sm active:shadow-none mt-8 mx-auto"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            height="24px"
+            viewBox="0 -960 960 960"
+            width="24px"
+            fill="#000000"
+            className="fill-current"
+          >
+            <path d="M240-200h120v-240h240v240h120v-360L480-740 240-560v360Zm-80 80v-480l320-240 320 240v480H520v-240h-80v240H160Zm320-350Z" />
+          </svg>
+          <span>Return to home page</span>
+        </Link>
+      </SuccessPage>
+    );
   }
 
   return (
@@ -98,7 +117,7 @@ export default function LoginPage(): ReactElement {
           className="grid gap-4 mt-8"
           onSubmit={handleFormSubmit}
         >
-          {error !== null && <p className="text-red-300">{error.message}</p>}
+          {error && <ErrorParagraph message={error.message} />}
 
           <FieldWrapper>
             <label htmlFor="email">Email:</label>
@@ -135,6 +154,7 @@ export default function LoginPage(): ReactElement {
           </ButtonPrimary>
         </form>
       </section>
+      <LoadingModal ref={loadingModalRef} message="Loggin in..." />
     </Main>
   );
 }
