@@ -2,7 +2,7 @@ import { useState } from "react";
 import type { Blog } from "../types/Blog.type";
 import type { FormData } from "../types/FormData.type";
 
-const useFormData = (blog: Blog | null) => {
+const useBlogFormData = (blog: Blog | null) => {
   const [formData, setFormData] = useState<FormData>({
     title: "",
     content: "",
@@ -25,4 +25,4 @@ const useFormData = (blog: Blog | null) => {
   return { formData, setFormData };
 };
 
-export default useFormData;
+export default useBlogFormData;

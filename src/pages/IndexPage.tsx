@@ -8,7 +8,7 @@ import {
 import Main from "../components/landmarks/Main";
 import Editor from "../components/edior/Editor";
 import ButtonPrimary from "../components/buttons/ButtonPrimary";
-import useFormData from "../hooks/useFormData";
+import useBlogFormData from "../hooks/useBlogFormData";
 import useUser from "../hooks/useUser";
 import getApiUrl from "../libs/getApiUrl";
 import type { FieldErrors } from "../types/FieldErrors.type";
@@ -23,7 +23,7 @@ import type { Blog } from "../types/Blog.type";
 export default function IndexPage(): ReactElement {
   const { user } = useUser();
   const { authToken } = useAuthToken();
-  const { formData, setFormData } = useFormData(null);
+  const { formData, setFormData } = useBlogFormData(null);
   const [formErrors, setFormErrors] = useState<FieldErrors | null>(null);
 
   const { data, error, isLoading, fetcher } = useDataFetcher();
