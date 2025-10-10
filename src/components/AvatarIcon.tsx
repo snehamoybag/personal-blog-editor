@@ -15,8 +15,9 @@ export default function AvatarIcon({
 }: Readonly<AvatarIconProps>): ReactElement {
   const ref = useRef<HTMLDivElement | null>(null);
 
-  const avatarBgColor =
-    `#${firstName.charCodeAt(0) + lastName.charCodeAt(0) + 100}`.slice(0, 4); // +100 to make sure hex code always has 3 characters
+  const avatarBgColor = `#${
+    firstName.charCodeAt(0) + lastName.charCodeAt(0) + 100
+  }`.slice(0, 4); // +100 to make sure hex code always has 3 characters
 
   useLayoutEffect(() => {
     if (!ref.current) {
@@ -49,6 +50,7 @@ export default function AvatarIcon({
             backgroundColor: avatarBgColor,
           }}
         >
+          {/* initials */}
           {firstName[0] + lastName[0]}
         </span>
       )}

@@ -3,7 +3,7 @@ import AvatarIcon from "../AvatarIcon";
 import type { Profile } from "../../types/Profile.type";
 
 interface ButtonAccountProps extends ButtonHTMLAttributes<HTMLButtonElement> {
-  profile?: Profile;
+  profile: Profile | null;
   className?: string;
   text: string;
 }

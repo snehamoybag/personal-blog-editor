@@ -65,7 +65,7 @@ export default function Root(): ReactElement {
 
         <div className="relative">
           <ButtonAccount
-            // profile={user?.profile}
+            profile={user ? user.profile : null}
             text="account options"
             onClick={toggleAccountOptions}
           />
