@@ -36,7 +36,7 @@ const useDataFetcher = () => {
         setIsLoading(false);
       }
     },
-    []
+    [],
   );
 
   return {

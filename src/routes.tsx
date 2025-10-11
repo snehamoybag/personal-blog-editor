@@ -6,6 +6,7 @@ import SignupPage from "./pages/SignupPage";
 import LoginPage from "./pages/LoginPage";
 import LogoutPage from "./pages/LogoutPage";
 import NewPage from "./pages/NewPage";
+import EditPage from "./pages/EditPage";
 
 const routes: RouteObject[] = [
   {
@@ -38,6 +39,8 @@ const routes: RouteObject[] = [
         path: "/new",
         element: <NewPage />,
       },
+
+      { path: "/edit/:blogId", element: <EditPage /> },
     ],
   },
 ];

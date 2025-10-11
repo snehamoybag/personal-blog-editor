@@ -1,6 +1,6 @@
 import type { Blog } from "./Blog.type";
 
-export type FormData = {
+export type BlogFormData = {
   title: string;
   content: string;
   coverImgUrl: string;

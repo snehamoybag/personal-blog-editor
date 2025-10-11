@@ -1,26 +1,28 @@
 import { useState } from "react";
 import type { Blog } from "../types/Blog.type";
-import type { FormData } from "../types/FormData.type";
+import type { BlogFormData } from "../types/BlogFormData.type";
 
 const useBlogFormData = (blog: Blog | null) => {
-  const [formData, setFormData] = useState<FormData>({
-    title: "",
-    content: "",
-    coverImgUrl: "",
-    tags: [],
-    status: "DRAFT",
-  });
+  const [formData, setFormData] = useState<BlogFormData>(() => {
+    if (blog) {
+      const { title, content, coverImgUrl, tags, status } = blog;
+      return {
+        title,
+        content,
+        coverImgUrl,
+        tags,
+        status,
+      };
+    }
 
-  if (blog) {
-    const { title, content, coverImgUrl, tags, status } = blog;
-    setFormData({
-      title,
-      content,
-      coverImgUrl: coverImg.url,
-      tags,
-      status,
-    });
-  }
+    return {
+      title: "",
+      content: "",
+      coverImgUrl: "",
+      tags: [],
+      status: "DRAFT",
+    };
+  });
 
   return { formData, setFormData };
 };

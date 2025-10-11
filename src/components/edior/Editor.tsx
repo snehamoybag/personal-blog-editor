@@ -2,15 +2,15 @@ import { useCallback, type ChangeEventHandler, type ReactElement } from "react";
 import FieldWrapper from "../form-elemets/FieldWrapper";
 import Input from "../form-elemets/Input";
 import Textarea from "../form-elemets/Textarea";
-import type { FormData } from "../../types/FormData.type";
+import type { BlogFormData } from "../../types/BlogFormData.type";
 import CoverImgField from "./CoverImgField";
 import TagsField from "./TagsField";
 import type { FieldErrors } from "../../types/FieldErrors.type";
 import ErrorLabel from "../form-elemets/ErrorLabel";
 
 interface EditorProps {
-  formData: FormData;
-  setFormData: React.Dispatch<React.SetStateAction<FormData>>;
+  formData: BlogFormData;
+  setFormData: React.Dispatch<React.SetStateAction<BlogFormData>>;
   formErrors: FieldErrors | null;
 }
 
@@ -32,14 +32,14 @@ export default function Editor({
     (newValue: string) => {
       setFormData((prevData) => ({ ...prevData, coverImgUrl: newValue }));
     },
-    [setFormData]
+    [setFormData],
   );
 
   const handleTagsChange = useCallback(
     (newValue: string[]) => {
       setFormData((prevData) => ({ ...prevData, tags: newValue }));
     },
-    [setFormData]
+    [setFormData],
   );
 
   return (
@@ -81,6 +81,7 @@ export default function Editor({
           minLength={120}
           required
           onChange={handleFieldChagne}
+          defaultValue={formData.content}
           value={formData.content}
           className={formErrors && formErrors.content ? "border-red-300" : ""}
         />
