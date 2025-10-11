@@ -89,7 +89,7 @@ export default function LoginPage(): ReactElement {
         <Tittle700 as="h1">Log in</Tittle700>
 
         <div className="mt-4">
-          <p>Log in using your email and password.</p>
+          <p>Log in using your email and password to write your blog.</p>
           <p>
             Don't have an account yet? <Link to="/signup">Sign up</Link>.
           </p>

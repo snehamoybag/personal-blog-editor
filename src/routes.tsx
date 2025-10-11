@@ -5,6 +5,7 @@ import ErrorPage from "./pages/ErrorPage";
 import SignupPage from "./pages/SignupPage";
 import LoginPage from "./pages/LoginPage";
 import LogoutPage from "./pages/LogoutPage";
+import NewPage from "./pages/NewPage";
 
 const routes: RouteObject[] = [
   {
@@ -31,6 +32,11 @@ const routes: RouteObject[] = [
       {
         path: "/logout",
         element: <LogoutPage />,
+      },
+
+      {
+        path: "/new",
+        element: <NewPage />,
       },
     ],
   },
