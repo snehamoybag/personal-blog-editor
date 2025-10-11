@@ -20,7 +20,7 @@ import {
 export default function Root(): ReactElement {
   const [user, setUser] = useState<User | null>(getUserFromLocalStorage);
   const [authToken, setAuthToken] = useState<string | null>(
-    getAuthTokenFromLocalStorage
+    getAuthTokenFromLocalStorage,
   );
 
   const outletContext = useMemo(
@@ -34,13 +34,13 @@ export default function Root(): ReactElement {
         set: setAuthToken,
       },
     }),
-    [user, authToken]
+    [user, authToken],
   );
 
   // sync local storage with component
   useEffect(() => {
     setUserToLocalStorage(user);
-    setAuthTokenToLocalStorage(authToken || "");
+    setAuthTokenToLocalStorage(authToken);
   }, [user, authToken]);
 
   const accountOptionsRef = useRef<HTMLDialogElement>(null);

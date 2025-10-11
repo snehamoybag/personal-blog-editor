@@ -31,7 +31,7 @@ export default function IndexPage(): ReactElement {
   if (!user || !authToken) {
     throw new HttpError(
       401,
-      "Unauthorized: User must log in to to create a new blog."
+      "Unauthorized: User must log in to to create a new blog.",
     );
   }
 

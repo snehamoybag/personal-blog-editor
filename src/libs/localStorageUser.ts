@@ -16,12 +16,12 @@ export const getUserFromLocalStorage = () => {
   }
 
   const matchesUserProperties = ["id", "role", "profile"].every((key) =>
-    Object.hasOwn(parsed, key)
+    Object.hasOwn(parsed, key),
   );
 
   if (!matchesUserProperties) {
     console.error(
-      new Error("User data missing one or multiple important properties.")
+      new Error("User data missing one or multiple important properties."),
     );
     return null;
   }
@@ -30,5 +30,10 @@ export const getUserFromLocalStorage = () => {
 };
 
 export const setUserToLocalStorage = (value: User | null) => {
+  if (!value) {
+    localStorage.removeItem(USER_KEY);
+    return;
+  }
+
   localStorage.setItem(USER_KEY, JSON.stringify(value));
 };

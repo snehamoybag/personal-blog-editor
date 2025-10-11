@@ -55,7 +55,7 @@ export default function LoginPage(): ReactElement {
     const { user, token } = data;
 
     setUser(user as User);
-    setAuthToken(JSON.stringify(token));
+    setAuthToken(token as string);
   }, [data, error, setUser, setAuthToken]);
 
   if (user && authToken) {

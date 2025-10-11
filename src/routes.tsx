@@ -4,6 +4,7 @@ import IndexPage from "./pages/IndexPage";
 import ErrorPage from "./pages/ErrorPage";
 import SignupPage from "./pages/SignupPage";
 import LoginPage from "./pages/LoginPage";
+import LogoutPage from "./pages/LogoutPage";
 
 const routes: RouteObject[] = [
   {
@@ -25,6 +26,11 @@ const routes: RouteObject[] = [
       {
         path: "/login",
         element: <LoginPage />,
+      },
+
+      {
+        path: "/logout",
+        element: <LogoutPage />,
       },
     ],
   },
