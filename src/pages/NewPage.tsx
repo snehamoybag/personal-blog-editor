@@ -1,13 +1,7 @@
-import {
-  useEffect,
-  useState,
-  type FormEventHandler,
-  type ReactElement,
-} from "react";
+import { useState, type FormEventHandler, type ReactElement } from "react";
 import Main from "../components/landmarks/Main";
 import Editor from "../components/edior/Editor";
 import ButtonPrimary from "../components/buttons/ButtonPrimary";
-import useBlogFormData from "../hooks/useBlogFormData";
 import useUser from "../hooks/useUser";
 import getApiUrl from "../libs/getApiUrl";
 import type { FieldErrors } from "../types/FieldErrors.type";

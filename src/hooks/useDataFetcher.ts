@@ -21,11 +21,11 @@ const useDataFetcher = () => {
         const { status, statusCode, message } = result;
         const data = result.data || null;
 
+        setData(data);
+
         if (status !== "success" || statusCode >= 400) {
           throw new HttpError(statusCode, message);
         }
-
-        setData(data);
       } catch (error) {
         if (error instanceof Error) {
           setError(error);
