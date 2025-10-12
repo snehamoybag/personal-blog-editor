@@ -19,14 +19,16 @@ import SuccessPage from "./SuccessPage";
 import getBlogUrl from "../libs/getBlogUrl";
 import type { Blog } from "../types/Blog.type";
 import { Navigate } from "react-router";
+import type { BlogFormData } from "../types/BlogFormData.type";
+import getBlogFormData from "../libs/getBlogFormData";
 
 export default function NewPage(): ReactElement {
   const { user } = useUser();
   const { authToken } = useAuthToken();
-  const { formData, setFormData } = useBlogFormData(null);
-  const [formErrors, setFormErrors] = useState<FieldErrors | null>(null);
-
   const { data, error, isLoading, fetcher } = useDataFetcher();
+  const [formData, setFormData] = useState<BlogFormData>(getBlogFormData);
+
+  const formErrors = data && data.errors ? (data.errors as FieldErrors) : null;
 
   const handleFormSubmit: FormEventHandler<HTMLFormElement> = (e) => {
     e.preventDefault();
@@ -44,14 +46,6 @@ export default function NewPage(): ReactElement {
       body: JSON.stringify(formData),
     });
   };
-
-  // update form errors
-  useEffect(() => {
-    if (data && data.errors) {
-      const fieldErrors = data.errors as FieldErrors;
-      setFormErrors(fieldErrors);
-    }
-  }, [data]);
 
   // redirect to login page if user or authToken not available
   if (!user || !authToken) {
