@@ -1,4 +1,9 @@
-import { useEffect, type ChangeEventHandler, type ReactElement } from "react";
+import {
+  useEffect,
+  type ChangeEventHandler,
+  type MouseEventHandler,
+  type ReactElement,
+} from "react";
 import CoverImgPreview from "./CoverImgPreview";
 import ButtonOutline from "../buttons/ButtonOutline";
 import LabelChangeCoverImg from "./LabelChangeCoverImg";
@@ -56,6 +61,13 @@ export default function CoverImgField({
     });
   };
 
+  const handleRemove: MouseEventHandler<HTMLButtonElement> = (e) => {
+    e.preventDefault();
+    if (setValue) {
+      setValue("");
+    }
+  };
+
   // update coverImgUrl value everytime data changes
   useEffect(() => {
     if (setValue && data && data.image) {
@@ -85,7 +97,10 @@ export default function CoverImgField({
               className={error ? "border-red-300" : ""}
             />
 
-            <ButtonOutline className="text-red-300 opacity-70 hover:opacity-100">
+            <ButtonOutline
+              className="text-red-300 opacity-70 hover:opacity-100"
+              onClick={handleRemove}
+            >
               Remove image
             </ButtonOutline>
           </div>
