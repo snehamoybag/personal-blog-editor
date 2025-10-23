@@ -8,7 +8,7 @@ const getBlogFormData = (blog?: Blog): BlogFormData => {
       content: "",
       coverImgUrl: "",
       tags: [],
-      status: "DRAFT",
+      status: "PUBLISHED",
     };
   }
 

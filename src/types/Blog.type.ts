@@ -5,9 +5,9 @@ export interface Blog {
   title: string;
   content: string;
   coverImgUrl: string;
-  status: "PUBLISHED" | "DRAFT";
-  createdAt: Date;
-  updatedAt: Date;
+  status: "PUBLISHED" | "ARCHIVED";
+  createdAt: string;
+  updatedAt: string;
   authorId: number;
   author: User;
   tags: string[];

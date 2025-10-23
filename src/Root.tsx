@@ -16,8 +16,11 @@ import {
   getAuthTokenFromLocalStorage,
   setAuthTokenToLocalStorage,
 } from "./libs/localStorageAPIAuthToken";
+import getApiUrl from "./libs/getApiUrl";
 
 export default function Root(): ReactElement {
+  const [isAuthTokenValidCheckDone, setIsAuthTokenValidCheckDone] =
+    useState(false);
   const [user, setUser] = useState<User | null>(getUserFromLocalStorage);
   const [authToken, setAuthToken] = useState<string | null>(
     getAuthTokenFromLocalStorage,
@@ -36,6 +39,30 @@ export default function Root(): ReactElement {
     }),
     [user, authToken],
   );
+
+  // check if jwt is valid on first load
+  // if not logout the user
+  useEffect(() => {
+    if (!authToken || isAuthTokenValidCheckDone) {
+      return;
+    }
+
+    const url = getApiUrl();
+    const headers = new Headers();
+    headers.append("Content-Type", "application/json");
+    headers.append("Authorization", `Bearer ${authToken}`);
+
+    fetch(url, { mode: "cors", method: "POST", headers })
+      .then((response) => {
+        if (!response.ok || response.status >= 400) {
+          // log out the user
+          setAuthToken(null);
+          setUser(null);
+        }
+      })
+      .catch((error) => console.error(error))
+      .finally(() => setIsAuthTokenValidCheckDone(true));
+  }, [authToken, isAuthTokenValidCheckDone]);
 
   // sync local storage with component
   useEffect(() => {
