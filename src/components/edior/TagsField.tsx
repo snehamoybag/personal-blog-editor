@@ -10,6 +10,8 @@ import FieldWrapper from "../form-elemets/FieldWrapper";
 import Input from "../form-elemets/Input";
 import type { FieldError } from "../../types/FieldError.type";
 import ErrorLabel from "../form-elemets/ErrorLabel";
+import useDebounce from "../../hooks/useDebounce";
+import TagSelectOptions from "./TagSelectOptions";
 
 interface TagsFieldProps {
   value: string[];
@@ -22,7 +24,10 @@ export default function TagsField({
   setValue,
   error,
 }: Readonly<TagsFieldProps>): ReactElement {
+  const debounce = useDebounce();
   const [inputValue, setInputValue] = useState("");
+  const [debouncedValue, setDebouncedValue] = useState("");
+
   const [minTagCharLength, maxTagCharLength] = [3, 55];
 
   const handleInputChagne: ChangeEventHandler<HTMLInputElement> = (e) => {
@@ -40,6 +45,8 @@ export default function TagsField({
 
     if (validCharRegex.test(enteredValue) || enteredValue === "") {
       setInputValue(enteredValue);
+
+      debounce(() => setDebouncedValue(enteredValue));
     }
   };
 
@@ -90,6 +97,17 @@ export default function TagsField({
     setValue(value.filter((tag) => tag !== e.currentTarget.value));
   };
 
+  const handleTagSelect: ChangeEventHandler<HTMLSelectElement> = (e) => {
+    const selectedValue = e.currentTarget.value;
+
+    if (selectedValue && value.includes(selectedValue) === false) {
+      setValue([...value, selectedValue]);
+    }
+
+    // remove the suggestions
+    setDebouncedValue("");
+  };
+
   const tagItemElems = value.map((tag, index) => (
     <li key={tag + index}>
       <TagItem key={tag} name={tag} onRemove={handleTagRemove} />
@@ -97,16 +115,17 @@ export default function TagsField({
   ));
 
   return (
-    <div>
+    <div className="grid gap-y-4">
       <ol role="list" className="flex flex-wrap itmes-center gap-2">
         {tagItemElems}
       </ol>
 
-      <FieldWrapper className="mt-4">
+      <FieldWrapper>
         <label htmlFor="tags" className="sr-only">
           tags:
         </label>
         <Input
+          type="search"
           id="tags"
           name="tags"
           placeholder="Add tags..."
@@ -121,6 +140,14 @@ export default function TagsField({
 
         {error && <ErrorLabel htmlFor="tags">{error.msg}</ErrorLabel>}
       </FieldWrapper>
+
+      {debouncedValue && (
+        <TagSelectOptions
+          name={debouncedValue}
+          onChange={handleTagSelect}
+          className="max-w-fit"
+        />
+      )}
     </div>
   );
 }
