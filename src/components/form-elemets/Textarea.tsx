@@ -1,10 +1,14 @@
 import {
+  useLayoutEffect,
+  useRef,
   type ChangeEventHandler,
   type ReactElement,
+  type RefObject,
   type TextareaHTMLAttributes,
 } from "react";
 
 interface TextareaProps extends TextareaHTMLAttributes<HTMLTextAreaElement> {
+  ref?: RefObject<HTMLTextAreaElement | null>;
   value?: string;
   onChange?: ChangeEventHandler<HTMLTextAreaElement>;
   className?: string;
@@ -12,34 +16,37 @@ interface TextareaProps extends TextareaHTMLAttributes<HTMLTextAreaElement> {
 
 export default function Textarea({
   className = "",
+  ref,
   value = "",
   onChange,
   ...restProps
 }: Readonly<TextareaProps>): ReactElement {
-  const handleChange: ChangeEventHandler<HTMLTextAreaElement> = (e) => {
-    if (!onChange) {
+  const defaultRef = useRef<HTMLTextAreaElement | null>(null);
+  const textareaRef = ref || defaultRef;
+
+  // auto resize on type
+  useLayoutEffect(() => {
+    if (!textareaRef || !textareaRef.current) {
       return;
     }
 
-    const elem = e.target;
+    const elem = textareaRef.current;
 
-    // auto resize on type
     const scrollHeight = elem.scrollHeight;
 
     elem.style.height = "auto"; // reset size first
 
-    if (scrollHeight) {
+    if (value && scrollHeight) {
       elem.style.height = scrollHeight + "px";
     }
-
-    // call the onChange event
-    onChange(e);
-  };
+  }, [textareaRef, value]);
 
   return (
     <textarea
+      ref={textareaRef}
+      value={value}
+      onChange={onChange}
       className={`min-h-[5lh] p-4 border-1 border-solid border-neutral-700 rounded-xl resize-none overflow-hidden ${className}`}
-      onChange={handleChange}
       {...restProps}
     />
   );

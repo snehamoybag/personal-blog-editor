@@ -1,4 +1,9 @@
-import { useCallback, type ChangeEventHandler, type ReactElement } from "react";
+import {
+  useCallback,
+  useRef,
+  type ChangeEventHandler,
+  type ReactElement,
+} from "react";
 import FieldWrapper from "../form-elemets/FieldWrapper";
 import Input from "../form-elemets/Input";
 import Textarea from "../form-elemets/Textarea";
@@ -7,6 +12,7 @@ import CoverImgField from "./CoverImgField";
 import TagsField from "./TagsField";
 import type { FieldErrors } from "../../types/FieldErrors.type";
 import ErrorLabel from "../form-elemets/ErrorLabel";
+import Tools from "./Tools";
 
 interface EditorProps {
   formData: BlogFormData;
@@ -19,18 +25,32 @@ export default function Editor({
   setFormData,
   formErrors,
 }: Readonly<EditorProps>): ReactElement {
-  const handleFieldChagne: ChangeEventHandler<
-    HTMLInputElement | HTMLTextAreaElement
-  > = (e) => {
-    setFormData((prevData) => ({
-      ...prevData,
-      [e.target.name]: e.target.value,
-    }));
-  };
+  const contentRef = useRef<HTMLTextAreaElement | null>(null);
 
   const handleCoverImageChange = useCallback(
     (newValue: string) => {
       setFormData((prevData) => ({ ...prevData, coverImgUrl: newValue }));
+    },
+    [setFormData],
+  );
+
+  const handleTitleChagne: ChangeEventHandler<HTMLInputElement> = (e) => {
+    setFormData((prevData) => ({
+      ...prevData,
+      title: e.target.value,
+    }));
+  };
+
+  const handleContentChagne: ChangeEventHandler<HTMLTextAreaElement> = (e) => {
+    setFormData((prevData) => ({
+      ...prevData,
+      content: e.target.value,
+    }));
+  };
+
+  const handleContentChagneViaTools = useCallback(
+    (newValue: string) => {
+      setFormData((prevData) => ({ ...prevData, content: newValue }));
     },
     [setFormData],
   );
@@ -62,7 +82,7 @@ export default function Editor({
           minLength={10}
           maxLength={120}
           required
-          onChange={handleFieldChagne}
+          onChange={handleTitleChagne}
           className={formErrors && formErrors.title ? "border-red-300" : ""}
         />
         {formErrors && formErrors.title && (
@@ -70,25 +90,35 @@ export default function Editor({
         )}
       </FieldWrapper>
 
-      <FieldWrapper>
-        <label htmlFor="content" className="sr-only">
-          Content:
-        </label>
-        <Textarea
-          id="content"
-          name="content"
-          placeholder="Write your blog content here..."
-          minLength={120}
-          required
-          onChange={handleFieldChagne}
-          defaultValue={formData.content}
-          value={formData.content}
-          className={formErrors && formErrors.content ? "border-red-300" : ""}
+      <div>
+        <Tools
+          contentRef={contentRef}
+          setContentValue={handleContentChagneViaTools}
         />
-        {formErrors && formErrors.content && (
-          <ErrorLabel htmlFor="content">{formErrors.content.msg}</ErrorLabel>
-        )}
-      </FieldWrapper>
+
+        <FieldWrapper className="mt-4">
+          <label htmlFor="content" className="sr-only">
+            Content:
+          </label>
+          <Textarea
+            ref={contentRef}
+            id="content"
+            name="content"
+            placeholder="Write your blog content here..."
+            minLength={120}
+            required
+            onChange={handleContentChagne}
+            value={formData.content}
+            className={formErrors && formErrors.content ? "border-red-300" : ""}
+          />
+
+          {formErrors && formErrors.content && (
+            <ErrorLabel htmlFor="content" className="mt-2">
+              {formErrors.content.msg}
+            </ErrorLabel>
+          )}
+        </FieldWrapper>
+      </div>
 
       <TagsField
         value={formData.tags}

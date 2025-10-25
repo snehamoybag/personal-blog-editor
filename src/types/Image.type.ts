@@ -1,6 +1,6 @@
 export interface Image {
   id: number;
-  publicId: String;
+  publicId: string;
   url: string;
   originalName: string;
   mimeType: string;
