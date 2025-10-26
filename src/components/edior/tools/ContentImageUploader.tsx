@@ -93,6 +93,9 @@ export default function ContentImageUploader({
     } else {
       setContentValue(value + "\n" + imageTag + "\n");
     }
+
+    // add focus back
+    contentRef.current.focus();
   }, [data, contentRef, setContentValue]);
 
   if (isLoading) {
@@ -101,12 +104,6 @@ export default function ContentImageUploader({
         <LoadingSpinner />
         <span>Uploading...</span>
       </div>
-    );
-  }
-
-  if (error) {
-    return (
-      <p className={`text-red-300 ${className}`}>Failed to upload the image.</p>
     );
   }
 
@@ -141,6 +138,12 @@ export default function ContentImageUploader({
         size={5 * 1024 * 1024} // 5mb
         onChange={handleChange}
       />
+
+      {error && (
+        <label htmlFor="content-image" className="text-red-300 text-xs">
+          Upload failed.
+        </label>
+      )}
     </FieldWrapper>
   );
 }

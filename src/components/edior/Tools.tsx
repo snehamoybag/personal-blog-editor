@@ -1,5 +1,6 @@
 import type { ReactElement, RefObject } from "react";
 import ContentImageUploader from "./tools/ContentImageUploader";
+import ContentLinkTag from "./tools/ContentLinkTag";
 
 interface ToolsProps {
   contentRef: RefObject<HTMLTextAreaElement | null>;
@@ -15,6 +16,11 @@ export default function Tools({
   return (
     <div className={`flex flex-wrap gap-4 ${className}`}>
       <ContentImageUploader
+        contentRef={contentRef}
+        setContentValue={setContentValue}
+      />
+
+      <ContentLinkTag
         contentRef={contentRef}
         setContentValue={setContentValue}
       />
