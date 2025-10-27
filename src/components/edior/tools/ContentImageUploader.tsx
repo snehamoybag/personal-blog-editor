@@ -64,10 +64,13 @@ export default function ContentImageUploader({
       return;
     }
 
+    const contentEl = contentRef.current;
     if (isLoading) {
-      contentRef.current.disabled = true;
+      contentEl.disabled = true;
+      contentEl.style.opacity = "0.5";
     } else {
-      contentRef.current.disabled = false;
+      contentEl.disabled = false;
+      contentEl.style.opacity = "1";
     }
   }, [isLoading, contentRef]);
 
@@ -108,12 +111,10 @@ export default function ContentImageUploader({
   }
 
   return (
-    <FieldWrapper>
-      <label
-        htmlFor="content-image"
-        title="Add an image"
-        className={`clickable p-2 border-1 border-neutral-700 rounded-full ${className}`}
-      >
+    <FieldWrapper
+      className={`clickable grid grid-flow-col items-center border-1 border-neutral-700 rounded-full ${error ? "pr-2 text-red-300 border-red-300" : ""} ${className}`}
+    >
+      <label htmlFor="content-image" title="Add an image" className="p-2">
         <svg
           xmlns="http://www.w3.org/2000/svg"
           height="24px"
@@ -140,7 +141,7 @@ export default function ContentImageUploader({
       />
 
       {error && (
-        <label htmlFor="content-image" className="text-red-300 text-xs">
+        <label htmlFor="content-image" className="text-xs">
           Upload failed.
         </label>
       )}
