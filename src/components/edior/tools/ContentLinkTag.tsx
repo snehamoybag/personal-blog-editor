@@ -20,15 +20,15 @@ const ContentLinkTag = ({
     const linkTag = `[text](${placeholder})`;
     const contentEl = contentRef.current;
 
-    contentEl.focus();
     // directly modify the element value to select the section
     contentEl.value = contentEl.value + linkTag;
 
+    const cursorStartPos = contentEl.value.length - placeholder.length - 1;
+    const cursorEndPos = contentEl.value.length - 1;
+
     // select the 'url here...' portion
-    contentEl.setSelectionRange(
-      linkTag.length - 1 - placeholder.length,
-      linkTag.length - 1,
-    );
+    contentEl.setSelectionRange(cursorStartPos, cursorEndPos);
+    contentEl.focus();
 
     // update with new value
     setContentValue(contentEl.value);
