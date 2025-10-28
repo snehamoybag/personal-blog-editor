@@ -11,5 +11,7 @@ export default function Tittle400({
   className = "",
   children,
 }: Readonly<Tittle400Props>): ReactElement {
-  return <Tag className={`font-bold ${className}`}>{children}</Tag>;
+  return (
+    <Tag className={`font-bold text-base sm:lg ${className}`}>{children}</Tag>
+  );
 }

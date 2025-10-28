@@ -15,6 +15,8 @@ import type { Blog } from "../types/Blog.type";
 import { Navigate } from "react-router";
 import type { BlogFormData } from "../types/BlogFormData.type";
 import getBlogFormData from "../libs/getBlogFormData";
+import EditorPreviewTabs from "../components/EditorPreviewTabs";
+import EditorPreview from "../components/EditorPreview";
 
 export default function NewPage(): ReactElement {
   const { user } = useUser();
@@ -71,10 +73,22 @@ export default function NewPage(): ReactElement {
         <form onSubmit={handleFormSubmit} className="grid gap-y-8">
           {error && <ErrorParagraph message={error.message} />}
 
-          <Editor
-            formData={formData}
-            setFormData={setFormData}
-            formErrors={formErrors}
+          <EditorPreviewTabs
+            editor={
+              <Editor
+                formData={formData}
+                setFormData={setFormData}
+                formErrors={formErrors}
+              />
+            }
+            preview={
+              <EditorPreview
+                title={formData.title}
+                content={formData.content}
+                tags={formData.tags}
+                coverImgUrl={formData.coverImgUrl}
+              />
+            }
           />
 
           <div className="flex itmes-cneter gap-4">
