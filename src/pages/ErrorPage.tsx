@@ -20,7 +20,7 @@ export default function ErrorPage(): ReactElement {
     title = `Error: ${error.statusCode}`;
     paragraph = error.message;
   } else if (error instanceof Error) {
-    title = `503: ${error.name || "Dang! Something went wrong."}`;
+    title = `${error.name || "Dang! Something went wrong."}`;
     paragraph = error.message;
   }
 

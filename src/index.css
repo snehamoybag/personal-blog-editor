@@ -9,6 +9,10 @@
 }
 
 @layer base {
+  :root {
+    color-scheme: dark;
+  }
+
   body {
     font-size: var(--text-base);
     background-color: var(--color-neutral-800);

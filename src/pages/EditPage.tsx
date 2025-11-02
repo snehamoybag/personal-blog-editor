@@ -22,6 +22,8 @@ import getBlogFormData from "../libs/getBlogFormData";
 import type { BlogFormData } from "../types/BlogFormData.type";
 import ButtonPrimary from "../components/buttons/ButtonPrimary";
 
+const blogUrl = getBlogUrl();
+
 export default function EditPage(): ReactElement {
   const params = useParams();
   const blogId = Number(params.blogId);
@@ -88,7 +90,7 @@ export default function EditPage(): ReactElement {
     return (
       <SuccessPage message="Blog updated successfully.">
         <a
-          href={`${getBlogUrl()}/blogs/${blogId}}`}
+          href={`${blogUrl}/blogs/${blogId}`}
           target="_blank"
           className="clickable inline-block no-underline bg-neutral-700 rounded-full mt-8"
         >

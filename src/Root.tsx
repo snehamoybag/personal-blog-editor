@@ -17,6 +17,12 @@ import {
   setAuthTokenToLocalStorage,
 } from "./libs/localStorageAPIAuthToken";
 import getApiUrl from "./libs/getApiUrl";
+import ListItem from "./components/ListItem";
+import { Link } from "react-router";
+import getBlogUrl from "./libs/getBlogUrl";
+
+const blogUrl = getBlogUrl();
+const apiUrl = getApiUrl();
 
 export default function Root(): ReactElement {
   const [isAuthTokenValidCheckDone, setIsAuthTokenValidCheckDone] =
@@ -47,12 +53,11 @@ export default function Root(): ReactElement {
       return;
     }
 
-    const url = getApiUrl();
     const headers = new Headers();
     headers.append("Content-Type", "application/json");
     headers.append("Authorization", `Bearer ${authToken}`);
 
-    fetch(url, { mode: "cors", method: "POST", headers })
+    fetch(apiUrl, { mode: "cors", method: "POST", headers })
       .then((response) => {
         if (!response.ok || response.status >= 400) {
           // log out the user
@@ -106,6 +111,29 @@ export default function Root(): ReactElement {
                 <UserAccountOptions user={user} />
               ) : (
                 <GuestAccountOptions />
+              )}
+
+              <ListItem>
+                <a href={blogUrl} target="_blank">
+                  Blog
+                </a>
+              </ListItem>
+
+              {user && (
+                <ListItem>
+                  <Link to="/logout" className="text-red-300">
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      height="24px"
+                      viewBox="0 -960 960 960"
+                      width="24px"
+                      fill="#000000"
+                    >
+                      <path d="M480-120q-75 0-140.5-28.5t-114-77q-48.5-48.5-77-114T120-480q0-75 28.5-140.5t77-114q48.5-48.5 114-77T480-840v80q-117 0-198.5 81.5T200-480q0 117 81.5 198.5T480-200v80Zm160-160-56-57 103-103H360v-80h327L584-624l56-56 200 200-200 200Z" />
+                    </svg>
+                    <span>Log out</span>
+                  </Link>
+                </ListItem>
               )}
             </ol>
           </AccountOptions>

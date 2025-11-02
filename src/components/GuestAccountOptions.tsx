@@ -2,11 +2,7 @@ import type { ReactElement } from "react";
 import ListItem from "./ListItem";
 import { Link } from "react-router";
 
-interface GuestAccountOptionsProps {
-  // props
-}
-
-export default function GuestAccountOptions({}: Readonly<GuestAccountOptionsProps>): ReactElement {
+export default function GuestAccountOptions(): ReactElement {
   return (
     <>
       <ListItem>
