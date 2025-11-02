@@ -1,4 +1,4 @@
-import { useEffect, useRef, type ReactElement, type RefObject } from "react";
+import { useEffect, useRef, type ReactElement } from "react";
 import LoadingSpinner from "./LoadingSpinner";
 
 interface LoadingModalProps {

@@ -1,4 +1,4 @@
-import type { ButtonHTMLAttributes, ReactElement, ReactNode } from "react";
+import type { ButtonHTMLAttributes, ReactElement } from "react";
 
 interface ButtonSearchProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   text: string;
