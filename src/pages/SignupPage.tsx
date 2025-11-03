@@ -88,7 +88,7 @@ export default function SignupPage(): ReactElement {
         message={`Signup complete. You're now logged in as ${user.profile.firstName} ${user.profile.lastName}`}
       >
         <Link
-          to="/"
+          to="/new"
           className="clickable max-w-fit flex items-center gap-2 no-underline px-4 py-2 bg-neutral-700 rounded-full shadow-sm active:shadow-none mt-8 mx-auto"
         >
           <svg

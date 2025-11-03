@@ -55,7 +55,7 @@ export default function NewPage(): ReactElement {
     return (
       <SuccessPage message="Blog published successfully.">
         <a
-          href={`${getBlogUrl()}/blogs/${blog.id}}`}
+          href={`${getBlogUrl()}/blogs/${blog.id}`}
           target="_blank"
           className="clickable inline-block no-underline bg-neutral-700 rounded-full mt-8"
         >
@@ -96,9 +96,10 @@ export default function NewPage(): ReactElement {
               Publish
             </ButtonPrimary>
 
-            <button type="submit" name="draft" className="clickable">
-              Save draft
-            </button>
+            {/* TODO */}
+            {/* <button type="submit" name="draft" className="clickable"> */}
+            {/*   Save draft */}
+            {/* </button> */}
           </div>
         </form>
       </section>

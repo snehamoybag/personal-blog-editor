@@ -123,9 +123,10 @@ export default function EditPage(): ReactElement {
                 Update
               </ButtonPrimary>
 
-              <button type="submit" name="draft" className="clickable">
-                Save draft
-              </button>
+              {/* TODO */}
+              {/* <button type="submit" name="draft" className="clickable"> */}
+              {/*   Save draft */}
+              {/* </button> */}
             </div>
           </form>
         )}
