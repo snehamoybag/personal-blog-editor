@@ -2,17 +2,20 @@ import type { ReactElement } from "react";
 
 interface LabelAddCoverImgProps {
   htmlFor: string;
+  isDisabled?: boolean;
   className?: string;
 }
 
 export default function LabelAddCoverImg({
   htmlFor,
+  isDisabled = false,
   className = "",
 }: Readonly<LabelAddCoverImgProps>): ReactElement {
   return (
     <label
       htmlFor={htmlFor}
-      className={`clickable max-w-max flex items-center gap-2 bg-neutral-700 px-4 py-2 rounded-full ${className}`}
+      aria-disabled={isDisabled}
+      className={`max-w-max flex items-center gap-2 bg-neutral-700 px-4 py-2 rounded-full ${isDisabled ? "opacity-50" : "clickable"} ${className}`}
     >
       <svg
         xmlns="http://www.w3.org/2000/svg"

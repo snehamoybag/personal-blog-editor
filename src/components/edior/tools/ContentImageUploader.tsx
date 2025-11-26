@@ -112,9 +112,14 @@ export default function ContentImageUploader({
 
   return (
     <FieldWrapper
-      className={`clickable grid grid-flow-col items-center border-1 border-neutral-700 rounded-full ${error ? "pr-2 text-red-300 border-red-300" : ""} ${className}`}
+      className={`grid grid-flow-col items-center border-1 border-neutral-700 rounded-full ${error ? "pr-2 text-red-300 border-red-300" : ""} ${!user || !authToken ? "opacity-50" : "clickable"} ${className}`}
     >
-      <label htmlFor="content-image" title="Add an image" className="p-2">
+      <label
+        htmlFor="content-image"
+        title="Add an image"
+        aria-disabled={!user || !authToken}
+        className="p-2"
+      >
         <svg
           xmlns="http://www.w3.org/2000/svg"
           height="24px"
@@ -138,6 +143,7 @@ export default function ContentImageUploader({
         accept="image/jpeg,image/jpg,image/png,image/webp"
         size={5 * 1024 * 1024} // 5mb
         onChange={handleChange}
+        disabled={!user || !authToken}
       />
 
       {error && (

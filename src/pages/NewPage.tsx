@@ -12,7 +12,6 @@ import ErrorParagraph from "../components/ErrorParagraph";
 import SuccessPage from "./SuccessPage";
 import getBlogUrl from "../libs/getBlogUrl";
 import type { Blog } from "../types/Blog.type";
-import { Navigate } from "react-router";
 import type { BlogFormData } from "../types/BlogFormData.type";
 import getBlogFormData from "../libs/getBlogFormData";
 import EditorPreviewTabs from "../components/EditorPreviewTabs";
@@ -26,7 +25,13 @@ export default function NewPage(): ReactElement {
 
   const formErrors = data && data.errors ? (data.errors as FieldErrors) : null;
 
+  const isAdmin = user !== null && user.role === "ADMIN" && Boolean(authToken);
+
   const handleFormSubmit: FormEventHandler<HTMLFormElement> = (e) => {
+    if (!isAdmin) {
+      throw new Error("You don not have permissions to post a blog.");
+    }
+
     e.preventDefault();
 
     const url = `${getApiUrl()}/blogs`;
@@ -42,11 +47,6 @@ export default function NewPage(): ReactElement {
       body: JSON.stringify(formData),
     });
   };
-
-  // redirect to login page if user or authToken not available
-  if (!user || !authToken) {
-    return <Navigate to="/login" />;
-  }
 
   // render success page on successful blog creation
   if (data && data.blog) {
@@ -70,6 +70,12 @@ export default function NewPage(): ReactElement {
   return (
     <Main>
       <section className="container-primary">
+        {!isAdmin && (
+          <p>
+            Please note that, only an admin can post a blog but you can always
+            write and preview to see how this editor works. （￣︶￣）↗
+          </p>
+        )}
         <form onSubmit={handleFormSubmit} className="grid gap-y-8">
           {error && <ErrorParagraph message={error.message} />}
 
@@ -91,16 +97,18 @@ export default function NewPage(): ReactElement {
             }
           />
 
-          <div className="flex itmes-cneter gap-4">
-            <ButtonPrimary type="submit" name="publish" className="px-8">
-              Publish
-            </ButtonPrimary>
+          {isAdmin && (
+            <div className="flex itmes-cneter gap-4">
+              <ButtonPrimary type="submit" name="publish" className="px-8">
+                Publish
+              </ButtonPrimary>
 
-            {/* TODO */}
-            {/* <button type="submit" name="draft" className="clickable"> */}
-            {/*   Save draft */}
-            {/* </button> */}
-          </div>
+              {/* TODO */}
+              {/* <button type="submit" name="draft" className="clickable"> */}
+              {/*   Save draft */}
+              {/* </button> */}
+            </div>
+          )}
         </form>
       </section>
 

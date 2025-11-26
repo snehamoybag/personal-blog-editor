@@ -4,7 +4,7 @@ import {
   type FormEventHandler,
   type ReactElement,
 } from "react";
-import { useNavigate, useParams } from "react-router";
+import { useParams } from "react-router";
 import HttpError from "../libs/HttpError";
 import useDataFetcher from "../hooks/useDataFetcher";
 import useBlog from "../hooks/useBlog";
@@ -37,6 +37,13 @@ export default function EditPage(): ReactElement {
   const { blog, error: blogError, isLoading: blogIsLoading } = useBlog(blogId);
   const [formData, setFormData] = useState<BlogFormData>(getBlogFormData);
 
+  const isAdmin = user !== null && user.role === "ADMIN" && Boolean(authToken);
+  const isAuthor = isAdmin && blog?.author.id === user.id;
+
+  if (!isAdmin || !isAuthor) {
+    throw new Error("You do not have permissions to edit this blog.");
+  }
+
   // sync formdata with blog
   useEffect(() => {
     if (blog) {
@@ -47,14 +54,8 @@ export default function EditPage(): ReactElement {
   const { data, error, isLoading, fetcher } = useDataFetcher(); // data of PUT request
   const formErrors = data && data.errors ? (data.errors as FieldErrors) : null;
 
-  const redirectTo = useNavigate();
-
   const handleSubmit: FormEventHandler<HTMLFormElement> = (e) => {
     e.preventDefault();
-
-    if (!authToken) {
-      return void redirectTo("/login");
-    }
 
     const url = `${getApiUrl()}/blogs/${blogId}`;
     const headers = new Headers();
@@ -76,13 +77,6 @@ export default function EditPage(): ReactElement {
 
   if (blogError) {
     throw blogError;
-  }
-
-  if (blog && blog.authorId !== user.id) {
-    throw new HttpError(
-      403,
-      "Access denied: You do not have permission to edit this blog.",
-    );
   }
 
   // return success page on successful update
@@ -118,16 +112,18 @@ export default function EditPage(): ReactElement {
               formErrors={formErrors}
             />
 
-            <div className="flex itmes-cneter gap-4">
-              <ButtonPrimary type="submit" name="publish" className="px-8">
-                Update
-              </ButtonPrimary>
+            {isAuthor && (
+              <div className="flex itmes-cneter gap-4">
+                <ButtonPrimary type="submit" name="publish" className="px-8">
+                  Update
+                </ButtonPrimary>
 
-              {/* TODO */}
-              {/* <button type="submit" name="draft" className="clickable"> */}
-              {/*   Save draft */}
-              {/* </button> */}
-            </div>
+                {/* TODO */}
+                {/* <button type="submit" name="draft" className="clickable"> */}
+                {/*   Save draft */}
+                {/* </button> */}
+              </div>
+            )}
           </form>
         )}
       </section>

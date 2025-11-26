@@ -32,11 +32,13 @@ export default function CoverImgField({
   const { user } = useUser();
   const { authToken } = useAuthToken();
 
-  if (!user || !authToken) {
-    throw new Error("Please log in to upload a cover image.");
-  }
+  const isAdmin = user !== null && Boolean(authToken) && user.role === "ADMIN";
 
   const handleChange: ChangeEventHandler<HTMLInputElement> = (e) => {
+    if (!isAdmin) {
+      throw new Error("You don not have permissions to upload an image.");
+    }
+
     const elem = e.target;
     const files = elem.files;
 
@@ -108,6 +110,7 @@ export default function CoverImgField({
       ) : (
         <LabelAddCoverImg
           htmlFor="cover-image"
+          isDisabled={!isAdmin}
           className={error ? "border-red-300" : ""}
         />
       )}
@@ -121,7 +124,15 @@ export default function CoverImgField({
         accept="image/jpeg,image/jpg,image/png,image/webp"
         size={5 * 1024 * 1024} // 5mb
         onChange={handleChange}
+        disabled={!isAdmin}
       />
+
+      {/* when user is not logged in */}
+      {!isAdmin && (
+        <ErrorLabel htmlFor="cover-image" className="block mt-2">
+          You do not have permissions to upload an image.
+        </ErrorLabel>
+      )}
 
       {/* fetch error label */}
       {uploadError && (
